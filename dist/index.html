@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Protótipo navegável da jornada SoulMove integrado ao ecossistema SoulUP.">
+  <title>SoulMove — Protótipo da jornada</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="prototype-shell">
+    <header class="prototype-toolbar">
+      <div>
+        <strong>SoulMove</strong>
+        <span>protótipo demonstrativo</span>
+      </div>
+      <nav aria-label="Alternar perspectiva do protótipo">
+        <button class="toolbar-tab active" type="button" data-perspective="user">App do usuário</button>
+        <button class="toolbar-tab" type="button" data-perspective="business">SoulBusiness</button>
+      </nav>
+      <button class="toolbar-reset" type="button" data-action="reset">Reiniciar</button>
+    </header>
+
+    <main id="prototype-root" aria-live="polite"></main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
