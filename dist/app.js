@@ -5,7 +5,7 @@
 const campaign = {
   sponsor: "VIVA",
   title: "Sua jornada vale mais",
-  goal: "Complete 3 jornadas de menor emissão até domingo.",
+  goal: "Complete 3 jornadas elegíveis entre 10 e 25 de setembro.",
   reward: "12 Pontos Soul + oferta exclusiva",
   rewardPoints: 12,
   distanceKm: 8.4,
@@ -32,6 +32,23 @@ const baseMetrics = {
 };
 
 const initialState = () => ({
+  mode: "free",
+  journeys: [],
+  currentJourney: null,
+  selectedJourney: null,
+  segments: [],
+  cycle: "week",
+  outcome: "validated",
+  campaignProgress: 2,
+  rewardIssued: false,
+  offerOpened: false,
+  couponIssued: false,
+  campaignStatus: "active",
+  campaignAccepted: false,
+  reservation: 0,
+  businessZone: "all",
+  reportVersion: 0,
+  campaignDraft: false,
   perspective: "user",
   screen: "feed",
   points: 520,
@@ -134,7 +151,7 @@ function systemBar() {
 }
 
 function topBar() {
-  return `<header class="app-topbar">
+  return `<header class="app-topbar"><button class="move-entry" type="button" data-action="move-home">${icon("leaf",18)} SoulMove</button>
     <button class="balance-pill" type="button" data-action="wallet">${icon("wallet", 18)}<span>${state.points} Pts</span></button>
     <button class="icon-button" type="button" aria-label="Marketplace" data-action="marketplace">${icon("bag")}</button>
     <span class="top-spacer"></span>
@@ -166,7 +183,7 @@ function phone(content, options = {}) {
 }
 
 function isLiked(collection, id) { return state[collection].includes(id); }
-function completedUserJourneys() { return Math.min(campaign.totalJourneys, campaign.completedJourneys + (state.validated ? 1 : 0)); }
+function completedUserJourneys() { return state.campaignProgress; }
 
 function socialActions(id, baseLikes, baseComments, collection = "likedPosts") {
   const liked = isLiked(collection, id);
@@ -192,14 +209,14 @@ function renderFeed() {
     </article>
     <article class="feed-post campaign-post">
       <header class="post-head"><span class="post-avatar brand">${icon("leaf", 18)}</span><div class="post-author"><strong>${campaign.sponsor}</strong><span>Patrocinado • campanha demonstrativa</span></div>${icon("ellipsis")}</header>
-      <button class="campaign-art" type="button" data-action="open-campaign"><img src="./assets/soulmove-campaign.webp" alt="Passageira utilizando transporte público em uma cidade"><span class="campaign-art-overlay"><span><small>DESAFIO SOULMOVE</small><h1>${campaign.title}</h1><p>Três jornadas de menor emissão nesta semana.</p></span><span class="campaign-reward">+${campaign.rewardPoints} Pontos Soul + benefício</span></span></button>
+      <button class="campaign-art" type="button" data-action="open-campaign"><img src="./assets/soulmove-campaign.webp" alt="Passageira utilizando transporte público em uma cidade"><span class="campaign-art-overlay"><span><small>DESAFIO SOULMOVE</small><h1>${campaign.title}</h1><p>Três jornadas elegíveis de 10 a 25 de setembro.</p></span><span class="campaign-reward">+${campaign.rewardPoints} Pontos Soul + benefício</span></span></button>
       ${socialActions("campaign", 186, 23)}
       <button class="feed-cta" type="button" data-action="open-campaign">Conhecer a campanha ${icon("arrow", 17)}</button>
       <p class="caption"><strong>${campaign.sponsor}</strong> Reconheça deslocamentos que já fazem parte da sua rotina.</p>
     </article>
     <article class="feed-post">
       <header class="post-head"><span class="post-avatar user-two">RM</span><div class="post-author"><strong>Rafael Martins</strong><span>Compartilhou uma conquista SoulMove • 1 h</span></div>${icon("ellipsis")}</header>
-      <button class="achievement-post" type="button" data-action="ranking"><span class="achievement-label">${icon("check", 15)} JORNADA VALIDADA</span><h2>${campaign.title}</h2><div class="achievement-stats"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>ranking</span></div></div><p>2 de 3 jornadas concluídas</p></button>
+      <button class="achievement-post" type="button" data-action="ranking"><span class="achievement-label">${icon("check", 15)} JORNADA VALIDADA</span><h2>${campaign.title}</h2><div class="achievement-stats"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>Liga semanal</span></div></div><p>3 de 3 jornadas · meta da campanha concluída</p></button>
       ${socialActions("achievement", 73, 11)}
       <p class="caption"><strong>Rafael Martins</strong> Mais uma jornada concluída! 🌿</p>
     </article>
@@ -229,13 +246,13 @@ function renderClipz() {
     <div class="clipz-feed" aria-label="Conteúdos Clipz roláveis">
       <article class="clipz-slide clipz-routine"><div class="clipz-copy"><small>@luizasantos • COMUNIDADE</small><h1>Minha cidade começa nas escolhas da rotina</h1><p>Hoje fui de transporte público e aproveitei o caminho para desacelerar.</p><span class="clipz-hint">Role para ver o próximo Clipz ↓</span></div>${clipzSide("clipz-routine", 324, 38)}<div class="clipz-user"><span class="post-avatar user-one">LS</span><div><strong>Luiza Santos</strong><br><small>#MobilidadeEmMovimento</small></div></div></article>
       <article class="clipz-slide clipz-campaign"><img src="./assets/soulmove-campaign.webp" alt="Passageira em transporte público"><div class="clipz-shade"></div><div class="clipz-copy"><small>${campaign.sponsor} • CONTEÚDO PATROCINADO</small><h1>Sua jornada vale mais</h1><p>Complete três jornadas, receba ${campaign.rewardPoints} Pontos Soul e desbloqueie uma oferta.</p><button class="dark-outline-button" type="button" data-action="open-campaign">Participar da missão</button></div>${clipzSide("clipz-campaign", 512, 64)}<div class="clipz-user"><span class="post-avatar brand">${icon("leaf", 18)}</span><div><strong>${campaign.sponsor}</strong><br><small>Campanha demonstrativa</small></div></div></article>
-      <article class="clipz-slide clipz-achievement"><div class="clipz-copy"><small>@rafaelmartins • CONQUISTA SOULMOVE</small><span class="clipz-check">${icon("check", 22)}</span><h1>Jornada validada</h1><div class="clipz-result-grid"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>ranking</span></div></div><p>Constância que vira conquista e inspira a comunidade.</p><button class="dark-outline-button" type="button" data-action="open-campaign">Conhecer o desafio</button></div>${clipzSide("clipz-achievement", 271, 29)}<div class="clipz-user"><span class="post-avatar user-two">RM</span><div><strong>Rafael Martins</strong><br><small>2 de 3 jornadas</small></div></div></article>
+      <article class="clipz-slide clipz-achievement"><div class="clipz-copy"><small>@rafaelmartins • CONQUISTA SOULMOVE</small><span class="clipz-check">${icon("check", 22)}</span><h1>Jornada validada</h1><div class="clipz-result-grid"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>Liga semanal</span></div></div><p>Constância que vira conquista e inspira a comunidade.</p><button class="dark-outline-button" type="button" data-action="open-campaign">Conhecer o desafio</button></div>${clipzSide("clipz-achievement", 271, 29)}<div class="clipz-user"><span class="post-avatar user-two">RM</span><div><strong>Rafael Martins</strong><br><small>3 de 3 jornadas · meta concluída</small></div></div></article>
     </div>
   </section>`, { top: false, active: "clipz" });
 }
 
 function innerScreen(title, body, footer = "") {
-  return phone(`<header class="inner-header"><button class="icon-button" type="button" data-action="back">${icon("back")}</button><strong>${title}</strong><span></span></header>${body}${footer}`, { top: false, bottom: false });
+  return phone(`<header class="inner-header"><button class="icon-button" type="button" data-action="back" aria-label="Voltar">${icon("back")}</button><strong>${title}</strong><span></span></header>${body}${footer}`, { top: false, bottom: false });
 }
 
 function renderCampaignDetail() {
@@ -403,12 +420,12 @@ function renderWallet() {
   return phone(`<section class="wallet-overlay-page">
     <article class="wallet-floating-card"><span class="wallet-watermark">S</span><button class="wallet-close" type="button" data-action="close-wallet" aria-label="Fechar carteira">${icon("close", 27)}</button><small>MINHA CARTEIRA</small><div class="wallet-card-label"><strong>Saldo</strong><button type="button" data-action="toggle-wallet-balance" aria-label="Mostrar ou ocultar saldo">${icon("eye", 21)}</button></div><div class="wallet-cash-balance">${state.walletBalanceVisible ? "R$ 5,02" : "R$ ••••"}</div><button class="wallet-access" type="button" data-action="wallet-detail">Acessar carteira</button></article>
     <div class="wallet-shortcuts" aria-label="Ações da carteira"><button type="button" data-action="prototype-notice" data-message="Saque via PIX representado apenas visualmente"><span>${icon("wallet", 27)}</span><strong>Sacar via<br>PIX</strong></button><button type="button" data-action="prototype-notice" data-message="Leitura de cupom fiscal simulada"><span>${icon("receipt", 27)}</span><strong>Ler Cupom<br>Fiscal</strong></button><button type="button" data-action="prototype-notice" data-message="Vale energia representado apenas visualmente"><span>${icon("bulb", 28)}</span><strong>Resgatar Vale<br>Energia</strong></button><button type="button" data-action="prototype-notice" data-message="Pagamento de conta representado apenas visualmente"><span>${icon("bolt", 28)}</span><strong>Pagar Conta<br>de Luz</strong></button></div>
-    <button class="wallet-points-preview" type="button" data-action="wallet-detail"><span>${icon("badge", 23)}</span><div><small>SALDO EM RECOMPENSAS</small><strong>${state.points} Pontos Soul</strong><p>${state.validated ? `Última entrada: +${campaign.rewardPoints} pela jornada SoulMove` : "Veja suas últimas movimentações"}</p></div>${icon("chevron", 18)}</button>
+    <button class="wallet-points-preview" type="button" data-action="wallet-detail"><span>${icon("badge", 23)}</span><div><small>SALDO EM RECOMPENSAS</small><strong>${state.points} Pontos Soul</strong><p>${state.rewardIssued ? `Última entrada: +${campaign.rewardPoints} pela meta da campanha SoulMove` : "Veja suas últimas movimentações"}</p></div>${icon("chevron", 18)}</button>
   </section>`, { active: "feed" });
 }
 
 function renderWalletDetail() {
-  return innerScreen("Minha carteira", `<section class="page wallet-detail-page"><div class="wallet-points-balance"><span>${icon("badge", 25)}</span><div><small>SALDO EM RECOMPENSAS</small><strong>${state.points} <em>Pontos Soul</em></strong></div><button type="button" data-action="marketplace">Usar pontos</button></div><div class="wallet-money-summary"><span>Saldo para saque</span><strong>${state.walletBalanceVisible ? "R$ 5,02" : "R$ ••••"}</strong><button type="button" data-action="toggle-wallet-balance" aria-label="Mostrar ou ocultar saldo">${icon("eye", 19)}</button></div><h2 class="section-heading">Movimentações</h2><div class="wallet-history">${state.validated ? `<article class="wallet-entry highlight"><span>${icon("leaf")}</span><div><strong>Jornada SoulMove validada</strong><small>Hoje • ${campaign.title}</small></div><b>+${campaign.rewardPoints}</b></article>` : ""}<article class="wallet-entry"><span>${icon("badge")}</span><div><strong>Missão semanal</strong><small>Ontem • Comunidade</small></div><b>+8</b></article><article class="wallet-entry debit"><span>${icon("bag")}</span><div><strong>Benefício utilizado</strong><small>03 set • Marketplace</small></div><b>-10</b></article><article class="wallet-entry"><span>${icon("heart")}</span><div><strong>Engajamento no Clipz</strong><small>01 set • Recompensa</small></div><b>+4</b></article></div>${state.validated ? `<div class="wallet-credit-note">${icon("check")} O crédito de +${campaign.rewardPoints} Pontos Soul foi registrado nesta demonstração.</div>` : ""}</section>`);
+  return innerScreen("Minha carteira", `<section class="page wallet-detail-page"><div class="wallet-points-balance"><span>${icon("badge", 25)}</span><div><small>SALDO EM RECOMPENSAS</small><strong>${state.points} <em>Pontos Soul</em></strong></div><button type="button" data-action="marketplace">Usar pontos</button></div><div class="wallet-money-summary"><span>Saldo para saque</span><strong>${state.walletBalanceVisible ? "R$ 5,02" : "R$ ••••"}</strong><button type="button" data-action="toggle-wallet-balance" aria-label="Mostrar ou ocultar saldo">${icon("eye", 19)}</button></div><h2 class="section-heading">Movimentações</h2><div class="wallet-history">${state.rewardIssued ? `<article class="wallet-entry highlight"><span>${icon("leaf")}</span><div><strong>Meta da campanha concluída</strong><small>Hoje • ${campaign.title}</small></div><b>+${campaign.rewardPoints}</b></article>` : ""}<article class="wallet-entry"><span>${icon("badge")}</span><div><strong>Missão semanal</strong><small>Ontem • Comunidade</small></div><b>+8</b></article><article class="wallet-entry debit"><span>${icon("bag")}</span><div><strong>Benefício utilizado</strong><small>03 set • Marketplace</small></div><b>-10</b></article><article class="wallet-entry"><span>${icon("heart")}</span><div><strong>Engajamento no Clipz</strong><small>01 set • Recompensa</small></div><b>+4</b></article></div>${state.rewardIssued ? `<div class="wallet-credit-note">${icon("check")} O crédito de +${campaign.rewardPoints} Pontos Soul foi registrado nesta demonstração.</div>` : ""}</section>`);
 }
 
 const marketplaceStores = [
@@ -431,7 +448,7 @@ function renderMarketplace() {
   const stores = filteredMarketplaceStores();
   const categories = ["Todos", "Acessórios", "Automotivo", "Mobilidade", "Bem-estar", "Casa"];
   return innerScreen("Marketplace", `<section class="marketplace-page"><div class="marketplace-webbar"><span class="marketplace-logo">soul <b>UP</b></span><span class="marketplace-cash">R$ 5,02</span><span class="marketplace-profile">${icon("user", 18)}</span></div><div class="market-search"><input id="market-search-input" type="search" maxlength="30" value="${escapeHtml(state.marketplaceQuery)}" placeholder="Busque por lojas aqui" aria-label="Buscar lojas"><button type="button" data-action="apply-market-search" aria-label="Buscar">${icon("search", 19)}</button></div>
-    <button class="marketplace-hero" type="button" data-action="open-campaign"><img src="./assets/soulmove-campaign.webp" alt="Campanha demonstrativa SoulMove"><span><small>CAMPANHA SOULMOVE</small><strong>${campaign.title}</strong><p>Complete a jornada e receba +${campaign.rewardPoints} Pontos Soul.</p></span></button><div class="marketplace-dots"><b></b><i></i><i></i><i></i></div>
+    <button class="marketplace-hero" type="button" data-action="open-campaign"><img src="./assets/soulmove-campaign.webp" alt="Campanha demonstrativa SoulMove"><span><small>CAMPANHA SOULMOVE</small><strong>${campaign.title}</strong><p>Complete a meta da campanha e receba +${campaign.rewardPoints} Pontos Soul.</p></span></button><div class="marketplace-dots"><b></b><i></i><i></i><i></i></div>
     <div class="marketplace-content"><header class="marketplace-list-heading"><div><small>CATÁLOGO DEMONSTRATIVO</small><h1>Lojas com cashback</h1></div><button type="button" data-action="prototype-notice" data-message="Ordenação representada visualmente">Ordenar por ${icon("sliders", 16)}</button></header><div class="market-categories">${categories.map(category => `<button class="${state.marketplaceCategory === category ? "active" : ""}" type="button" data-action="select-market-category" data-category="${category}">${category}</button>`).join("")}</div>
       ${stores.length ? `<div class="market-store-grid">${stores.map(store => `<button class="market-store-card" type="button" data-action="prototype-notice" data-message="Loja demonstrativa: ${store.name}"><span class="store-logo ${store.className}">${store.initials}</span><strong>${store.name}</strong><small>${store.cashback}</small></button>`).join("")}</div><div class="market-list-progress"><span>Mostrando ${stores.length} de ${marketplaceStores.length} lojas demonstrativas</span><div><i style="width:${Math.max(18, Math.round(stores.length / marketplaceStores.length * 100))}%"></i></div><button type="button" data-action="load-market-stores">Ver mais lojas</button></div>` : `<div class="market-empty">${icon("search", 28)}<strong>Nenhuma loja encontrada</strong><p>Tente outro nome ou selecione a categoria “Todos”.</p><button type="button" data-action="clear-market-search">Limpar busca</button></div>`}
       <section class="market-offers"><h2>As melhores ofertas estão aqui!</h2><p>Use cupons de desconto e ainda acompanhe os benefícios da campanha.</p><div class="market-coupon-row"><button class="market-coupon campaign" type="button" data-action="${state.benefitUnlocked ? "benefit" : "open-campaign"}"><span class="store-logo viva">V</span><small>${campaign.sponsor} • SOULMOVE</small><strong>Ganhe 15% OFF</strong><p>${state.benefitUnlocked ? `Cupom ${campaign.coupon} desbloqueado.` : "Conclua a missão para liberar a oferta."}</p><b>${state.benefitUnlocked ? "Ver cupom" : "Conhecer missão"}</b></button><button class="market-coupon" type="button" data-action="prototype-notice" data-message="Cupom demonstrativo"><span class="store-logo natural">BN</span><small>BEM NATURAL</small><strong>Ganhe 8% OFF</strong><p>Oferta demonstrativa por tempo limitado.</p><b>Ver oferta</b></button></div></section>
@@ -634,5 +651,3 @@ document.addEventListener("change", event => {
   }
   render();
 });
-
-render();
