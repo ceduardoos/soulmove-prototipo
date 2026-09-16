@@ -21,7 +21,7 @@ O botão Reiniciar limpa a sessão. Recarregar a página também limpa os dados:
 
 - Jornada livre permanece disponível sem campanha; uma jornada tem um ou vários trechos e um único resultado.
 - Ônibus urbano é o modal atual. Espera/caminhada não entram na distância pontuada. Identificação automática e outros modais continuam futuros.
-- Pontos de Impacto são distintos de Pontos Soul. As duas primeiras jornadas elegíveis do dia entram nos rankings; compras/cliques/compartilhamentos não pontuam.
+- Pontos de Impacto são distintos de Pontos Soul. Todas as jornadas validadas entram na Liga e na Temporada, sem limite diário; compras/cliques/compartilhamentos não pontuam.
 - Liga: segunda a domingo em São Paulo, sem benefício financeiro presumido. Temporada: mensal; a edição com prêmio de energia permanece não habilitada enquanto suas dependências não forem definidas.
 - Campanha independente, selecionada antes da jornada; no máximo uma campanha avançada por jornada. Elegibilidade da campanha é distinta da elegibilidade competitiva.
 - Reserva de cobertura na adesão, consumo ao emitir uma recompensa, sem nova reserva no início e sem crédito duplicado.
@@ -58,3 +58,6 @@ A recuperação de contexto não disponibilizou integralmente todos os chats. Es
 ## Verificação
 
 Verificação de sintaxe JavaScript e cenários de estado: separação livre/campanha, integração única, teto diário, linha inelegível, recompensa única/reserva, resultados alternativos e conciliação de fechamento. Limitações de verificação visual/publicação devem ser relatadas separadamente da implementação.
+
+### Reconhecimento semanal (lote 3)
+Cada uma das duas primeiras rotas livres validadas da semana libera um selo e um cartão com a posição no desbloqueio. Rotas de campanha não consomem esse reconhecimento. O término da jornada, no horário de São Paulo, define sua semana e seu mês. O limite de duas jornadas elegíveis de campanha por dia permanece separado do placar.
