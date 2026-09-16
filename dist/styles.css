@@ -1178,6 +1178,60 @@ button { touch-action: manipulation; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
+/* Lote 2: native Missions and Mobility surfaces, scoped to these views. */
+.mission-feed-entry { cursor: pointer; }
+.organic-post-card .mission-feed-link { width: auto; height: auto; margin-top: 18px; display: flex; justify-content: flex-start; gap: 6px; background: none; font-size: 13px; }
+.missions-native { margin: -20px; }
+.missions-banner { display: flex; gap: 12px; align-items: center; padding: 26px 20px; border-radius: 0 0 28px 28px; background: #f7f8ff; }
+.missions-banner > div { flex: 1; min-width: 0; }
+.move-page .missions-banner h1 { margin: 0 0 18px; font-size: 24px; line-height: 1.3; }
+.missions-banner h1 span { color: #4a50e3; }
+.missions-banner-icon { color: #686ceb; }
+.missions-completed { padding: 9px 12px; border: 1px solid #8c90d6; border-radius: 24px; background: #fff; color: #454bac; font-size: 12px; cursor: pointer; }
+.move-page .missions-native > h2 { margin: 24px 20px 4px; }
+.missions-native > .mobility-caption { margin: 0 20px 18px; }
+.missions-filters { display: flex; gap: 6px; padding: 0 16px 12px; flex-wrap: wrap; }
+.mission-chip { border: 0; border-radius: 24px; padding: 9px 10px; background: #f5f6fb; color: #505564; font-size: 12px; cursor: pointer; }
+.mission-chip.selected { background: #4a50e3; color: #fff; }
+.native-mission { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 20px 16px; border-bottom: 1px solid #f0f1f7; }
+.mission-reward { width: 40px; height: 40px; display: grid; place-items: center; background: #575ee7; border-radius: 50%; color: #fff; font-size: 13px; font-weight: 700; }
+.mission-reward.impact { background: #eef0ff; color: #4a50e3; }
+.native-mission-copy h3 { margin: 0; font-size: 14px; line-height: 1.3; }
+.move-page .native-mission-copy p { margin: 5px 0; font-size: 11px; line-height: 1.4; }
+.native-mission-copy small { display: block; font-size: 11px; color: #505564; }
+.mission-begin { padding: 9px 10px; border: 0; border-radius: 24px; background: #4a50e3; color: #fff; font-size: 12px; cursor: pointer; max-width: 85px; }
+.mission-empty { padding: 20px; font-size: 14px; }
+.mobility-hub .mobility-hero { margin: -20px -20px 22px; padding: 25px 22px 18px; border-radius: 0 0 28px 28px; color: #fff; background: linear-gradient(125deg,#4a50e3,#686ceb); }
+.mobility-eyebrow { font-size: 10px; letter-spacing: .08em; font-weight: 700; }
+.move-page .mobility-hero h1 { color: #fff; margin: 10px 0 6px; font-size: 28px; }
+.move-page .mobility-hero p { color: #eef0ff; font-size: 13px; margin: 0; }
+.mobility-totals { display: grid; grid-template-columns: 1fr 1.5fr; gap: 14px; margin: 22px 0 8px; }
+.mobility-totals strong,.mobility-totals span { display: block; }
+.mobility-totals strong { font-size: 27px; font-weight: 700; line-height: 1.2; }
+.mobility-totals span { font-size: 12px; color: #eef0ff; margin-top: 4px; }
+.mobility-hero > small { display: block; font-size: 10px; color: #eef0ff; }
+.mobility-start { width: 100%; margin-top: 20px; padding: 13px; border: 0; border-radius: 28px; background: #fff; color: #4147c5; font-size: 16px; font-weight: 750; cursor: pointer; }
+.mobility-mode { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; }
+.mobility-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 20px; }
+.move-page .mobility-section-heading h2 { margin: 0; font-size: 19px; }
+.text-link { padding: 9px 0; border: 0; background: transparent; color: #4a50ce; font-size: 12px; font-weight: 600; cursor: pointer; }
+.move-page .mobility-caption { font-size: 12px; line-height: 1.5; }
+.mobility-hub .league-standings { margin: 6px 0 24px; }
+.mobility-hub .move-campaign h2 { font-size: 19px; }
+.mobility-hub .move-campaign p { margin: 6px 0 12px; font-size: 13px; }
+.mobility-hub .move-campaign small { font-size: 10px; color: #646979; }
+.mobility-hub progress { width: 100%; height: 6px; border: 0; border-radius: 6px; background: #edeffa; accent-color: #4a50e3; }
+.mobility-hub progress::-webkit-progress-bar { background: #edeffa; border-radius: 6px; }
+.mobility-hub progress::-webkit-progress-value { background: #4a50e3; border-radius: 6px; }
+.campaign-progress-label { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; margin: 7px 0; }
+.campaign-progress-label strong { color: #484fc8; }
+.mobility-season { padding: 20px; margin-top: 22px; background: #f4f5fe; border-radius: 20px; }
+.move-page .mobility-season h2 { margin: 8px 0 4px; font-size: 20px; }
+.move-page .mobility-season p { margin: 0 0 14px; font-size: 12px; }
+.mobility-season > strong { display: block; color: #4147a8; font-size: 24px; }
+.mobility-season > strong small { display: block; font-size: 12px; font-weight: 400; }
+.mobility-tools { display: flex; justify-content: space-between; border-top: 1px solid #edeff5; margin-top: 24px; padding-top: 10px; }
+
 /* Sprint 3 uses the existing SoulUP blue, white and dark surfaces. */
 .move-entry{display:flex;align-items:center;gap:5px;border:0;border-radius:18px;background:#e8f3ff;color:#143b67;padding:8px;font-weight:700;font-size:12px;white-space:nowrap}.move-page{font-size:16px;line-height:1.5}.move-page h1{font-size:28px;line-height:1.16;margin:14px 0}.move-page h2{font-size:20px;margin:24px 0 10px}.move-page p{color:#566477}.move-kicker{font-size:12px;color:#35628a;font-weight:800;letter-spacing:.08em}.move-heading{padding-bottom:10px}.move-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.move-stats>div{padding:18px 14px;border-radius:16px;background:#eaf4ff;display:flex;flex-direction:column;gap:6px}.move-stats strong{font-size:27px;color:#163d67}.move-stats span{font-size:14px;color:#415978}.move-links,.move-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.move-links button,.move-tabs button{font-size:14px;padding:12px 8px}.move-pill{display:inline-block;padding:6px 10px;border-radius:8px;background:#e7f5ef;color:#205e48;font-size:13px;font-weight:700}.move-warning{background:#fff0d1;color:#6c4a04}.move-campaign{overflow:hidden;border:1px solid #dbe4ed;border-radius:18px;margin:16px 0}.move-campaign>img{display:block;width:100%;height:160px;object-fit:cover}.move-campaign>div{padding:18px}.move-campaign h2{margin:8px 0}.move-campaign button{margin-top:16px}.move-demo{font-size:13px!important;line-height:1.55!important;border-top:1px solid #dae1e8;padding-top:14px;margin-top:22px!important;color:#667387!important}.move-field{display:flex;flex-direction:column;gap:8px;margin:20px 0;font-size:15px;font-weight:600}.move-field select,.move-field input,.move-field textarea{border:1px solid #aebdcb;border-radius:10px;background:#fff;color:#18344f;font:inherit;font-weight:400;padding:13px;min-width:0;width:100%;box-sizing:border-box}.move-details{margin:20px 0;padding:14px;border:1px solid #ccd9e5;border-radius:12px;font-size:14px}.move-details summary{cursor:pointer;font-weight:600}.move-history{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid #dbe4ed;border-radius:12px;width:100%;text-align:left;padding:18px;margin-bottom:12px;color:#18344f}.move-history span{display:flex;flex-direction:column;gap:7px}.move-history small{font-size:13px}.move-prize{background:#edf5ff;border-radius:16px;padding:20px;margin:20px 0}.move-finance{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.move-finance>div{display:flex;flex-direction:column;gap:10px}.move-finance strong{font-size:22px}.move-page .info-row span{font-size:14px;line-height:1.55}.move-page .secondary-button{margin-top:10px}.move-page .move-links .secondary-button,.move-page .move-tabs .secondary-button{margin-top:0}.move-page .primary-button{margin-top:12px}.move-page .move-tabs .primary-button{margin-top:0}.business-main .dashboard-panel{margin-bottom:20px}.business-main .ready-row{padding:12px 0;border-bottom:1px solid #e4eaf0}.business-main .secondary-button{margin:8px 0}.business-main .move-field{max-width:650px}.app-topbar{gap:7px}.balance-pill{font-size:12px}.move-page .share-stats{gap:8px}.move-page .share-stats strong{font-size:24px}.move-page .share-stats span{font-size:12px}.move-page .share-card{padding:22px}.move-page .share-card p{color:#e0eaff}.move-page button:focus-visible,.move-entry:focus-visible{outline:3px solid #ffba49;outline-offset:3px}
 @media(max-width:700px){.move-finance{grid-template-columns:1fr 1fr}.business-sidebar{display:block;padding:15px}.business-nav{display:flex;flex-wrap:wrap;gap:8px}.business-nav button{width:auto;padding:10px;font-size:12px}.business-brand{margin-bottom:12px}.business-app{display:block}.business-main{padding:18px}.business-heading{align-items:flex-start;gap:12px}.business-heading h1{font-size:24px}.metric-grid{grid-template-columns:1fr 1fr}.dashboard-grid{grid-template-columns:1fr}.prototype-toolbar{gap:8px;flex-wrap:wrap}.prototype-toolbar nav{order:3;width:100%}.phone{max-width:100%}}

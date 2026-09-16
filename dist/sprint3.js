@@ -10,15 +10,38 @@ const competitive = () => state.journeys.filter(j=>j.rankingEligible).reduce((su
 const dailyCount = () => state.journeys.filter(j=>j.day===demo.day && j.rankingEligible).length;
 function screen(title,body,footer='') { return innerScreen(title,`<section class="page move-page">${body}</section>`,footer?`<footer class="sticky-action">${footer}</footer>`:''); }
 function renderMoveHome(){
- return screen('SoulMove',`<div class="move-heading"><span class="move-kicker">SUA MOBILIDADE, SEU IMPACTO</span><h1>Seu caminho conta.</h1><p>Registre sua jornada de ônibus, acompanhe seu impacto e encontre campanhas.</p></div>
- <div class="move-stats"><div><strong>${340+competitive()}</strong><span>Pontos de Impacto na semana</span></div><div><strong>${dailyCount()}/2</strong><span>jornadas pontuadas hoje</span></div></div>
- ${button('Iniciar jornada livre','free-journey','primary-button')}
- <p class="page-subtitle">Você pode participar da Liga e da Temporada mesmo sem uma campanha.</p>
- <div class="move-links">${button('Liga semanal','week')}${button('Temporada mensal','month')}${button('Histórico','history')}${button('Autorizações','permissions')}</div>
- <h2>Campanhas patrocinadas</h2><p>Cada campanha tem seu próprio período, meta e benefício.</p>
- <article class="move-campaign"><img src="./assets/soulmove-campaign.webp" alt="Passageira em ônibus na campanha VIVA"><div><small>VIVA · 10–25 SET · EXEMPLO</small><h2>${campaign.title}</h2><p>3 jornadas elegíveis → 12 Pontos Soul + oferta de 15%.</p><span class="move-pill">${state.campaignProgress}/3 jornadas · ${state.campaignStatus==='active'?'Disponível':state.campaignStatus==='closing'?'Em encerramento':'Encerrada'}</span>${button('Ver campanha','open-campaign')}</div></article>
- ${row('Ônibus urbano','Caminhada, bicicleta, metrô e trem são evoluções futuras.','route')}
- <p class="move-demo">Demonstração em ${demo.date}. Pontuações, impacto, marcas e benefícios simulados.</p>`);
+ const valid=state.journeys.filter(j=>j.status==='validated');
+ const avoided=valid.reduce((sum,j)=>sum+j.avoided,0);
+ const cta=state.currentJourney?(state.currentJourney.ended?'Concluir validação':'Continuar rota'):'Iniciar rota';
+ return screen('Mobilidade',`<div class="mobility-hub">
+ <header class="mobility-hero"><span class="mobility-eyebrow">SOULMOVE · MISSÕES SOULUP</span><h1>Seu caminho conta.</h1><p>Esta semana · ${demo.week}</p>
+ <div class="mobility-totals"><div><strong>${valid.length}</strong><span>rotas validadas</span></div><div><strong>${avoided.toLocaleString('pt-BR',{maximumFractionDigits:2})} kg</strong><span>CO₂ evitado estimado</span></div></div><small>Rotas e CO₂ registrados nesta sessão demonstrativa.</small>
+ ${button(cta,'free-journey','mobility-start')}<span class="mobility-mode">${icon('route',16)} Ônibus urbano</span></header>
+ <div class="mobility-section-heading"><h2>Liga semanal</h2>${button('Ver classificação','week','text-link')}</div>
+ ${renderLeagueStandings(false,340+competitive(),true)}
+ <div class="mobility-section-heading"><h2>Campanhas</h2>${button('Ver missões','missions','text-link')}</div><p class="mobility-caption">Metas patrocinadas que geram Pontos Soul para sua carteira.</p>
+ <article class="move-campaign"><img src="./assets/soulmove-campaign.webp" alt="Passageira em ônibus na campanha VIVA"><div><small>VIVA · 10–25 SET · DEMONSTRAÇÃO</small><h2>${campaign.title}</h2><p>3 jornadas elegíveis</p><progress max="3" value="${state.campaignProgress}" aria-label="Progresso da campanha"></progress><div class="campaign-progress-label"><span>${state.campaignProgress}/3 jornadas</span><strong>+12 Pontos Soul</strong></div>${button('Ver campanha','open-campaign')}</div></article>
+ <section class="mobility-season"><span class="mobility-eyebrow">TEMPORADA MENSAL</span><h2>${demo.month}</h2><p>Até 30 de setembro</p><strong>${(1240+competitive()).toLocaleString('pt-BR')} <small>Pontos de Impacto</small></strong>${button('Acompanhar temporada','month','text-link')}</section>
+ <nav class="mobility-tools" aria-label="Acessos da mobilidade">${button('Histórico','history','text-link')}${button('Autorizações','permissions','text-link')}</nav>
+ <p class="move-demo">Dados simulados. Pontos de Impacto são classificação; Pontos Soul são recompensas de campanhas.</p></div>`);
+}
+
+function renderMissions(){
+ const filter=state.missionsFilter;
+ const moving=state.currentJourney||state.journeys.some(j=>j.status==='validated');
+ const items=[
+  {id:'mobility',status:moving?'progress':'available',title:'Mobilidade',reward:icon('route',22),description:'Pontos de Impacto para a liga',progress:`${state.journeys.filter(j=>j.status==='validated').length} rotas validadas nesta sessão`,action:'move-home',label:'Começar'},
+  {id:'campaign',status:state.rewardIssued?'completed':state.joined?'progress':state.campaignStatus==='active'?'available':'closed',title:campaign.title,reward:'+12',description:'Pontos Soul · Campanha VIVA',progress:`Progresso ${state.campaignProgress}/3`,action:'open-campaign',label:state.rewardIssued?'Ver conquista':state.joined?'Continuar':'Começar'}
+ ];
+ const visible=items.filter(i=>filter==='all'?i.status!=='completed'&&i.status!=='closed':i.status===filter);
+ return screen('Missões',`<div class="missions-native"><header class="missions-banner"><div><h1>Complete missões e descubra <span>novas conquistas</span></h1>${button('Missões concluídas','completed-missions','missions-completed')}</div><span class="missions-banner-icon" aria-hidden="true">${icon('target',64)}</span></header>
+ <h2>${filter==='completed'?'Missões concluídas':'Missões'}</h2><p class="mobility-caption">Mobilidade e campanhas dentro da SoulUP.</p>
+ <nav class="missions-filters" aria-label="Filtrar missões">${[['all','Todos'],['available','Disponíveis'],['progress','Em Progresso']].map(([id,label])=>button(label,'filter-missions',`mission-chip ${filter===id?'selected':''}`,`data-filter="${id}" aria-pressed="${filter===id}"`)).join('')}</nav>
+ <div class="missions-list">${visible.map(i=>`<article class="native-mission"><span class="mission-reward ${i.id==='mobility'?'impact':''}">${i.reward}</span><div class="native-mission-copy"><h3>${i.title}</h3><p>${i.description}</p><small>${i.progress}</small></div>${button(i.label,i.action,'mission-begin')}</article>`).join('')||'<p class="mission-empty">'+(filter==='completed'?'Nenhuma missão concluída nesta sessão. As campanhas concluídas aparecerão aqui.':'Nenhuma missão neste filtro. Consulte Todos para explorar as opções.')+'</p>'}</div></div>`);
+}
+
+function renderPublicAchievement(){
+ return screen('Conquista compartilhada',`<h1>Mais uma jornada concluída!</h1><p>Rafael Martins · publicação demonstrativa</p><article class="achievement-post"><span class="achievement-label">JORNADA VALIDADA</span><h2>${campaign.title}</h2><div class="achievement-stats"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+12</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>posição compartilhada</span></div></div><p>3 de 3 jornadas · meta da campanha concluída</p></article><p>Registro público da conquista. A posição corresponde ao momento da publicação.</p>${button('Conhecer a campanha','open-campaign')}${button('Explorar mobilidade','move-home','primary-button')}`);
 }
 renderCampaignDetail = function(){
  return screen('Campanha patrocinada',`<div class="campaign-visual"><small>VIVA · CAMPANHA DEMONSTRATIVA</small><h1>${campaign.title}</h1><p>Reconheça os deslocamentos da sua rotina.</p></div>
@@ -69,7 +92,7 @@ renderResult = function(){const j=selectedResult();if(!j)return renderHistory();
  <p class="move-demo">*Valores ilustrativos, sem cálculo ambiental auditado. Não representam créditos de carbono. Fórmula final de pontuação e metodologia em validação.</p>`)};
 function renderHistory(){return screen('Histórico',`<h1>Suas jornadas</h1><p>Resultados, trechos e solicitações de revisão.</p>${state.journeys.length?state.journeys.slice().reverse().map((j,i)=>`<button type="button" class="move-history" data-action="history-result" data-id="${j.id}"><span><strong>${labels[j.status]}${j.appeal?' · contestação em análise':''}</strong><small>${demo.date} · ${j.mode==='free'?'Livre':'VIVA'} · ${j.segments.length} trecho(s)</small></span>${icon('chevron')}</button>`).join(''):row('Nenhuma jornada nesta sessão','Comece uma jornada livre ou escolha uma campanha.','route')}${button('Iniciar jornada livre','free-journey','primary-button')}`)}
 function renderAppeal(){return screen('Contestar resultado',`<h1>Solicitar revisão</h1><p>Explique o que aconteceu no deslocamento. Nenhum ponto ou benefício é concedido apenas por abrir uma contestação.</p><label class="move-field">Justificativa<textarea id="appeal-reason" maxlength="600" rows="5" placeholder="Conte o que precisa ser revisto"></textarea></label>${row('Evidência complementar opcional','Nesta demonstração, a análise utiliza a justificativa e os registros simulados. Não envie documentos pessoais.')}<p class="move-demo">Prazo e política de revisão dependem do regulamento versionado. Decisões após homologação exigem análise específica.</p>`,button('Enviar solicitação','submit-appeal','primary-button'))}
-function renderLeagueStandings(monthly, points) {
+function renderLeagueStandings(monthly, points, compact=false) {
  const people = [
   {id:'marcus',name:'Marcus',points:monthly?1820:680},
   {id:'kaique',name:'Kaique',points:monthly?1740:640},
@@ -85,7 +108,7 @@ function renderLeagueStandings(monthly, points) {
   <div class="league-podium">${podium.map((p,i)=>`<article class="league-podium-card podium-slot-${i+1}${p.current?' current':''}">
    <span class="league-place">${position(p)}º</span>${portrait(p)}<strong>${p.current?'Você':p.name}</strong><span class="league-score">${p.points.toLocaleString('pt-BR')} <small>pts</small></span>
   </article>`).join('')}</div>
-  <div class="league-list">${people.map(p=>`<article class="league-row${p.current?' current':''}" ${p.current?'aria-label="Sua classificação"':''}>
+  <div class="league-list">${people.filter(p=>!compact||p.current).map(p=>`<article class="league-row${p.current?' current':''}" ${p.current?'aria-label="Sua classificação"':''}>
    <span class="league-place">${position(p)}º</span>${portrait(p)}<div class="league-name"><strong>${p.current?'Você':p.name}</strong><small>${p.current?(state.rankingVisible?'Carlos Eduardo':'Só você pode ver seu perfil'):'Participante'}</small></div><strong class="league-score">${p.points.toLocaleString('pt-BR')}<small>pts</small></strong>
   </article>`).join('')}</div>
  </section>`;
@@ -110,17 +133,18 @@ renderBusiness = function(){const m=campaignMetrics(),used=6768+(state.rewardIss
  <article class="dashboard-panel"><h2>Orçamento e cobertura</h2><div class="move-finance">${[['Total',12000],['Utilizado',used],['Reservado',(state.campaignStatus==='closed'?0:1800)+state.reservation],['Disponível',12000-used-(state.campaignStatus==='closed'?0:1800)-state.reservation]].map(([label,val])=>`<div><span>${label}</span><strong>${money(val)}</strong></div>`).join('')}</div><p>Custo por jornada validada: ${money(used/m.validated)} · custo por conversão atribuída: ${money(used/m.conversions)}.</p><p>A adesão reserva um pacote por participante. O crédito consome a reserva sem duplicação.</p>${button('Exportar relatório provisório','export-report')}</article>`}
  <div class="privacy-banner">Indicadores agregados e simulados. Sem nomes, trajetos individuais, documentos ou evidências. Custos e metodologia ambiental precisam de validação para produção.</div></main></section></div>`};
 const legacyRenderUser=renderUser;
-renderUser=function(){const routes={'move-home':renderMoveHome,history:renderHistory,integration:renderIntegration,appeal:renderAppeal,'cancel-confirm':()=>screen('Cancelar jornada',`<h1>Encerrar sem validar?</h1><p>A coleta será interrompida e a jornada ficará no histórico como cancelada, sem pontos ou recompensa.</p>${button('Continuar jornada','resume-journey')}`,button('Confirmar cancelamento','cancel-confirm','primary-button'))};return routes[state.screen]?routes[state.screen]():legacyRenderUser()};
+renderUser=function(){const routes={missions:renderMissions,'public-achievement':renderPublicAchievement,'move-home':renderMoveHome,history:renderHistory,integration:renderIntegration,appeal:renderAppeal,'cancel-confirm':()=>screen('Cancelar jornada',`<h1>Encerrar sem validar?</h1><p>A coleta será interrompida e a jornada ficará no histórico como cancelada, sem pontos ou recompensa.</p>${button('Continuar jornada','resume-journey')}`,button('Confirmar cancelamento','cancel-confirm','primary-button'))};return routes[state.screen]?routes[state.screen]():legacyRenderUser()};
 // Rendering never starts/restarts collection or issues points.
 render=function(){document.querySelectorAll('[data-perspective]').forEach(b=>b.classList.toggle('active',b.dataset.perspective===state.perspective));root.innerHTML=state.perspective==='business'?renderBusiness():renderUser()};
-function beginMode(mode){if(state.currentJourney){navigate(state.currentJourney.processing?'validation':state.currentJourney.ended?'proof':'journey');return}state.mode=mode;state.proofType='';navigate(state.consentLocation&&state.consentRules?'ready':'consent')}
+function beginMode(mode){if(state.currentJourney){navigate(state.currentJourney.processing?'validation':state.currentJourney.ended?'proof':'journey');return}state.permissionOnly=false;state.mode=mode;state.proofType='';navigate(state.consentLocation&&state.consentRules?'ready':'consent')}
 function enterBusiness(view){clearJourneyTimers();state.perspective='business';state.businessView=view;render()}
 // Capture only remodeled actions; legacy social/catalog interactions remain intact.
 document.addEventListener('click',async event=>{
  const el=event.target.closest('[data-action]');if(!el||el.disabled)return;const action=el.dataset.action;
  const handlers={
   'move-home':()=>navigate('move-home'),'free-journey':()=>beginMode('free'),history:()=>navigate('history'),permissions:()=>{state.permissionOnly=true;navigate('consent')},
-  'open-campaign':()=>navigate('campaign'),join:()=>{if(!state.campaignAccepted||state.campaignStatus!=='active')return;if(!state.joined){state.joined=true;state.reservation=demo.rewardBudget}beginMode('campaign')},
+  missions:()=>{state.missionsFilter='all';navigate('missions')},'filter-missions':()=>{state.missionsFilter=el.dataset.filter;render()},'completed-missions':()=>{state.missionsFilter='completed';navigate('missions')},'public-achievement':()=>navigate('public-achievement'),
+  'open-campaign':()=>{if(state.screen!=='campaign')state.campaignReturn=state.screen;navigate('campaign')},join:()=>{if(!state.campaignAccepted||state.campaignStatus!=='active')return;if(!state.joined){state.joined=true;state.reservation=demo.rewardBudget}beginMode('campaign')},
   'consent-continue':()=>{if(!state.consentLocation||!state.consentRules)return;if(state.permissionOnly){state.permissionOnly=false;navigate('move-home')}else navigate('ready')},
   revoke:()=>{state.consentLocation=false;if(state.currentJourney){finalizeJourney('cancelled');clearJourneyTimers()}navigate('consent');showToast('Autorização revogada. Nenhuma coleta em andamento.')},
   'start-journey':()=>{if(state.currentJourney||!state.consentLocation||!state.consentRules)return;if(state.mode==='campaign'&&(!state.joined||state.campaignStatus!=='active')){showToast('Campanha indisponível para novos inícios');return}state.outcome=document.querySelector('#demo-outcome').value;state.currentJourney={id:crypto.randomUUID(),mode:state.mode,segments:[{line:document.querySelector('#bus-line').value,direction:document.querySelector('#bus-direction').value}],ended:false};state.journeyStarted=true;navigate('journey')},
@@ -140,7 +164,7 @@ document.addEventListener('click',async event=>{
   'authorize-close':()=>{if(!state.closeRequested)return;state.closeRequested=false;state.campaignStatus='closing';state.reportVersion=1;render()},
   homologate:()=>{if(state.currentJourney?.mode==='campaign'||state.journeys.some(j=>j.mode==='campaign'&&j.appeal)){showToast('Há jornadas ou contestações pendentes. Relatório permanece provisório.');return}if(state.campaignStatus!=='closing')return;state.campaignStatus='closed';state.reservation=0;state.reportVersion+=1;render()},
   'export-report':()=>downloadText('soulbusiness-viva-relatorio.txt',reportText()),
-  back:()=>{if(state.screen==='wallet'){navigate(state.walletReturn||'feed');return}if(state.screen==='marketplace'){navigate(state.marketplaceReturn||'feed');return}if(state.screen==='wallet-detail'){navigate('wallet');return}const parent={campaign:'move-home',ready:'move-home',consent:'move-home',history:'move-home',ranking:'move-home','ranking-rules':'ranking',result:'history',share:'result',appeal:'result',integration:'journey',proof:'proof',journey:'journey',benefit:'move-home',offer:'benefit',comments:state.commentsReturn};if(state.screen==='proof'){showToast('A coleta já foi encerrada. Envie para validação.');return}navigate(parent[state.screen]||'feed')}
+  back:()=>{if(state.screen==='wallet'){navigate(state.walletReturn||'feed');return}if(state.screen==='marketplace'){navigate(state.marketplaceReturn||'feed');return}if(state.screen==='wallet-detail'){navigate('wallet');return}if(state.screen==='missions'&&state.missionsFilter==='completed'){state.missionsFilter='all';render();return}const parent={campaign:state.campaignReturn,'move-home':'missions',missions:'feed','public-achievement':'feed',ready:state.mode==='campaign'?'campaign':'move-home',consent:state.permissionOnly?'move-home':state.mode==='campaign'?'campaign':'move-home',history:'move-home',ranking:'move-home','ranking-rules':'ranking',result:'history',share:'result',appeal:'result',integration:'journey',proof:'proof',journey:'journey',benefit:'move-home',offer:'benefit',comments:state.commentsReturn};if(state.screen==='proof'){showToast('A coleta já foi encerrada. Envie para validação.');return}navigate(parent[state.screen]||'feed')}
  };
  if(handlers[action]){event.preventDefault();event.stopImmediatePropagation();await handlers[action]()}
 },true);

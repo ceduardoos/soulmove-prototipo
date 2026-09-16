@@ -66,6 +66,8 @@ const initialState = () => ({
   overlayReturn: "feed",
   walletReturn: "feed",
   marketplaceReturn: "feed",
+  missionsFilter: "all",
+  campaignReturn: "move-home",
   likedPosts: [],
   likedClipz: [],
   userComments: {},
@@ -198,14 +200,14 @@ function renderFeed() {
   return phone(`
     <section class="stories" aria-label="Stories">
       <button class="story" type="button" data-action="open-story" data-story="ads"><span class="story-ring"><span class="story-core">${icon("badge")}</span></span><span class="story-label">Ads</span></button>
-      <button class="story" type="button" data-action="open-story" data-story="campaign"><span class="story-ring"><span class="story-core story-photo"></span></span><span class="story-label">SoulMove</span></button>
+      <button class="story" type="button" data-action="open-story" data-story="soulmove"><span class="story-ring"><span class="story-core story-photo"></span></span><span class="story-label">SoulMove</span></button>
       <button class="story" type="button" data-action="open-story" data-story="community"><span class="story-ring"><span class="story-core story-community">${icon("users")}</span></span><span class="story-label">Mobilidade</span></button>
       <button class="story" type="button" data-action="open-story" data-story="marketplace"><span class="story-ring"><span class="story-core story-market">${icon("bag")}</span></span><span class="story-label">Benefícios</span></button>
       <button class="story" type="button" data-action="prototype-notice" data-message="Criação de story simulada neste protótipo"><span class="story-ring muted"><span class="story-core">${icon("plus")}</span></span><span class="story-label">Seu story</span></button>
     </section>
     <article class="feed-post">
       <header class="post-head"><span class="post-avatar user-one">LS</span><div class="post-author"><strong>Luiza Santos</strong><span>Comunidade Mobilidade em movimento • 18 min</span></div>${icon("ellipsis")}</header>
-      <div class="organic-post-card"><span>${icon("flame", 24)}</span><small>META DA SEMANA</small><h2>Dois dias escolhendo um caminho mais leve para a cidade.</h2><p>Pequenas escolhas ficam melhores quando a comunidade acompanha.</p></div>
+      <button class="organic-post-card mission-feed-entry" type="button" data-action="missions"><span>${icon("flame", 24)}</span><small>MISSÕES SOULUP</small><h2>Pequenas escolhas. Novas conquistas.</h2><p>Conheça as missões e acompanhe sua mobilidade.</p><span class="mission-feed-link">Explorar missões ${icon("arrow",16)}</span></button>
       ${socialActions("community", 42, 6)}
       <p class="caption"><strong>Luiza Santos</strong> Começando a semana com constância 💙</p>
     </article>
@@ -218,7 +220,7 @@ function renderFeed() {
     </article>
     <article class="feed-post">
       <header class="post-head"><span class="post-avatar user-two">RM</span><div class="post-author"><strong>Rafael Martins</strong><span>Compartilhou uma conquista SoulMove • 1 h</span></div>${icon("ellipsis")}</header>
-      <button class="achievement-post" type="button" data-action="ranking"><span class="achievement-label">${icon("check", 15)} JORNADA VALIDADA</span><h2>${campaign.title}</h2><div class="achievement-stats"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>Liga semanal</span></div></div><p>3 de 3 jornadas · meta da campanha concluída</p></button>
+      <button class="achievement-post" type="button" data-action="public-achievement"><span class="achievement-label">${icon("check", 15)} JORNADA VALIDADA</span><h2>${campaign.title}</h2><div class="achievement-stats"><div><strong>7,1 km</strong><span>transporte público</span></div><div><strong>+${campaign.rewardPoints}</strong><span>Pontos Soul</span></div><div><strong>#12</strong><span>Liga semanal</span></div></div><p>3 de 3 jornadas · meta da campanha concluída</p></button>
       ${socialActions("achievement", 73, 11)}
       <p class="caption"><strong>Rafael Martins</strong> Mais uma jornada concluída! 🌿</p>
     </article>
@@ -387,6 +389,7 @@ function renderConversion() {
 }
 
 const storyContent = {
+  soulmove: { owner: "SoulMove", meta: "Mobilidade dentro da SoulUP", title: "Seu caminho também conta", text: "Acompanhe seu impacto na liga e descubra campanhas patrocinadas nas Missões SoulUP.", action: "move-home", label: "Explorar mobilidade", className: "story-community-view" },
   ads: { owner: "Soul Ads", meta: "Conteúdo demonstrativo", title: "Benefícios que combinam com você", text: "Descubra ofertas e missões disponíveis no ecossistema SoulUP.", action: "marketplace", label: "Explorar benefícios", className: "story-ads" },
   campaign: { owner: campaign.sponsor, meta: "Patrocinado • campanha demonstrativa", title: campaign.title, text: `Complete três jornadas e receba ${campaign.rewardPoints} Pontos Soul mais uma oferta exclusiva.`, action: "open-campaign", label: "Conhecer campanha", className: "story-campaign" },
   community: { owner: "Mobilidade em movimento", meta: "Comunidade SoulUP", title: "Sua conquista inspira novas jornadas", text: "Compartilhe progresso, acompanhe o ranking e mantenha a constância.", action: "communities", label: "Abrir comunidade", className: "story-community-view" },
