@@ -160,7 +160,7 @@ function topBar() {
     <button class="icon-button" type="button" aria-label="Marketplace" data-action="marketplace">${icon("bag")}</button>
     <span class="top-spacer"></span>
     <button class="icon-button" type="button" aria-label="Pesquisar" data-action="prototype-notice" data-message="Busca representada apenas visualmente nesta demonstração">${icon("search")}</button>
-    <button class="icon-button" type="button" aria-label="Atividades" data-action="prototype-notice" data-message="Você está em uma sequência de 2 dias">${icon("flame")}</button>
+    <button class="icon-button" type="button" aria-label="Atividades" data-action="missions">${icon("flame")}</button>
     <span class="avatar member-photo member-carlos" role="img" aria-label="Perfil de Carlos Eduardo"></span>
   </header>`;
 }
