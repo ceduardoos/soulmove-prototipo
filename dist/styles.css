@@ -1187,6 +1187,7 @@ button { touch-action: manipulation; }
 .move-page .missions-banner h1 { margin: 0 0 18px; font-size: 24px; line-height: 1.3; }
 .missions-banner h1 span { color: #4a50e3; }
 .missions-banner-icon { color: #686ceb; }
+.missions-banner-icon svg { width: 56px; height: 56px; }
 .missions-completed { padding: 9px 12px; border: 1px solid #8c90d6; border-radius: 24px; background: #fff; color: #454bac; font-size: 12px; cursor: pointer; }
 .move-page .missions-native > h2 { margin: 24px 20px 4px; }
 .missions-native > .mobility-caption { margin: 0 20px 18px; }
