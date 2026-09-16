@@ -18,8 +18,13 @@
         <button class="toolbar-tab active" type="button" data-perspective="user">App do usuário</button>
         <button class="toolbar-tab" type="button" data-perspective="business">SoulBusiness</button>
       </nav>
-      <button class="toolbar-reset" type="button" data-action="reset">Reiniciar</button>
+      <div class="toolbar-actions">
+        <button class="toolbar-reset" type="button" id="presentation-start" title="Ocultar controles; pressione Esc para voltar">Apresentar</button>
+        <button class="toolbar-reset" type="button" data-action="reset">Reiniciar</button>
+      </div>
     </header>
+
+    <button type="button" id="presentation-exit" class="presentation-exit" hidden aria-label="Mostrar controles da apresentação">Mostrar controles · Esc</button>
 
     <main id="prototype-root" aria-live="polite"></main>
   </div>

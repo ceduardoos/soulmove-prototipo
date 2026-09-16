@@ -64,6 +64,8 @@ const initialState = () => ({
   activePost: "campaign",
   commentsReturn: "feed",
   overlayReturn: "feed",
+  walletReturn: "feed",
+  marketplaceReturn: "feed",
   likedPosts: [],
   likedClipz: [],
   userComments: {},
@@ -151,13 +153,13 @@ function systemBar() {
 }
 
 function topBar() {
-  return `<header class="app-topbar"><button class="move-entry" type="button" data-action="move-home">${icon("leaf",18)} SoulMove</button>
+  return `<header class="app-topbar">
     <button class="balance-pill" type="button" data-action="wallet">${icon("wallet", 18)}<span>${state.points} Pts</span></button>
     <button class="icon-button" type="button" aria-label="Marketplace" data-action="marketplace">${icon("bag")}</button>
     <span class="top-spacer"></span>
     <button class="icon-button" type="button" aria-label="Pesquisar" data-action="prototype-notice" data-message="Busca representada apenas visualmente nesta demonstração">${icon("search")}</button>
     <button class="icon-button" type="button" aria-label="Atividades" data-action="prototype-notice" data-message="Você está em uma sequência de 2 dias">${icon("flame")}</button>
-    <span class="avatar" aria-label="Perfil">CE</span>
+    <span class="avatar member-photo member-carlos" role="img" aria-label="Perfil de Carlos Eduardo"></span>
   </header>`;
 }
 
@@ -603,11 +605,11 @@ document.addEventListener("click", event => {
     "ranking-rules": () => navigate("ranking-rules"),
     share: () => navigate("share"),
     "publish-share": () => { state.sharePublished = true; state.shareChannel = actionElement.dataset.channel || "Clipz"; showToast(`Cartão compartilhado em ${state.shareChannel}`); setTimeout(() => navigate("result"), 700); },
-    wallet: () => { state.overlayReturn = state.screen === "wallet" ? "feed" : state.screen; navigate("wallet"); },
-    "close-wallet": () => navigate(state.overlayReturn || "feed"),
-    "wallet-detail": () => { if (state.screen !== "wallet") state.overlayReturn = state.screen; navigate("wallet-detail"); },
+    wallet: () => { if (state.screen !== "wallet") state.walletReturn = state.screen; navigate("wallet"); },
+    "close-wallet": () => navigate(state.walletReturn || "feed"),
+    "wallet-detail": () => { if (state.screen !== "wallet") state.walletReturn = state.screen; navigate("wallet-detail"); },
     "toggle-wallet-balance": () => { state.walletBalanceVisible = !state.walletBalanceVisible; render(); },
-    marketplace: () => { state.overlayReturn = state.screen === "marketplace" ? "feed" : state.screen; navigate("marketplace"); },
+    marketplace: () => { if (state.screen !== "marketplace") state.marketplaceReturn = state.screen; navigate("marketplace"); },
     "apply-market-search": () => { const input = document.querySelector("#market-search-input"); state.marketplaceQuery = input?.value || ""; render(); },
     "clear-market-search": () => { state.marketplaceQuery = ""; state.marketplaceCategory = "Todos"; render(); },
     "select-market-category": () => { state.marketplaceCategory = actionElement.dataset.category || "Todos"; render(); },

@@ -83,6 +83,13 @@ button { touch-action: manipulation; }
   border: 1px solid rgba(100,87,255,.28);
 }
 
+.toolbar-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.prototype-toolbar[hidden], .presentation-exit[hidden] { display: none; }
+.presentation-exit { position: fixed; right: 12px; bottom: 12px; z-index: 40; padding: 8px 12px; border: 1px solid #dfe3ea; border-radius: 20px; background: #fff; color: #50566a; font-size: 12px; cursor: pointer; }
+.presentation-mode .user-stage { min-height: 100vh; padding-top: 14px; padding-bottom: 14px; }
+.presentation-mode .phone { height: min(820px, calc(100vh - 28px)); }
+.presentation-mode .business-stage { min-height: 100vh; }
+
 .user-stage {
   min-height: calc(100vh - 64px);
   display: grid;
@@ -681,6 +688,35 @@ button { touch-action: manipulation; }
 .ranking-name strong { font-size: .72rem; }
 .ranking-name small { margin-top: 2px; color: var(--soul-muted); font-size: .61rem; }
 .ranking-rise { display: flex; align-items: center; gap: 2px; color: var(--soul-green); font-size: .66rem; font-weight: 800; }
+
+/* Lote 1: portraits retain the supplied originals; framing is presentation-only. */
+.member-photo { display: inline-block; width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%; background-color: #edf0fc; background-repeat: no-repeat; }
+.member-photo.member-carlos { background-image: url('./assets/members/carlos.jpg'); background-size: 280% auto; background-position: 50% 21%; }
+.member-photo.member-marcus { background-image: url('./assets/members/marcus.png'); background-size: 250% auto; background-position: 33% 33%; }
+.member-photo.member-kaique { background-image: url('./assets/members/kaique.png'); background-size: 350% auto; background-position: 44% 57%; }
+.member-photo.member-silas { background-image: url('./assets/members/silas.png'); background-size: 280% auto; background-position: 61% 30%; }
+.app-topbar .member-photo { width: 32px; height: 32px; }
+.league-standings { margin: 16px 0 24px; }
+.move-page .league-caption { margin: 0 0 16px; font-size: 12px; color: #656b7c; }
+.league-podium { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: end; gap: 8px; margin-bottom: 20px; }
+.league-podium-card { min-width: 0; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; border: 1px solid #e6e8f5; border-radius: 18px 18px 10px 10px; background: #f7f8fe; text-align: center; }
+.league-podium-card > strong { width: 100%; font-size: 13px; overflow-wrap: anywhere; }
+.league-podium-card .member-photo { width: 48px; height: 48px; }
+.podium-slot-1 { order: 2; padding-top: 23px; padding-bottom: 23px; background: #eceeff; border-color: #cfd3fa; }
+.podium-slot-2 { order: 1; }
+.podium-slot-3 { order: 3; }
+.league-place { color: #4a50cf; font-size: 14px; font-weight: 750; }
+.league-list { display: grid; gap: 8px; }
+.league-row { display: grid; grid-template-columns: 24px 36px minmax(0,1fr) auto; align-items: center; gap: 8px; min-height: 68px; padding: 10px; border: 1px solid #eceef5; border-radius: 14px; }
+.league-row .member-photo { width: 36px; height: 36px; }
+.league-name { min-width: 0; }
+.league-name strong, .league-name small { display: block; }
+.league-name strong { font-size: 14px; overflow-wrap: anywhere; }
+.league-name small { margin-top: 2px; font-size: 11px; line-height: 1.35; color: #656b7c; }
+.league-score { font-size: 16px; color: #343a75; font-weight: 750; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.league-score small { display: block; font-size: 10px; color: #656b7c; font-weight: 400; }
+.league-podium .league-score small { display: inline; }
+.league-standings .current { background: #edf0ff; border-color: #a8aff0; }
 .ranking-rules > h1 { max-width: 300px; }
 .visibility-control { margin-top: 18px; padding: 14px; border-radius: 14px; background: #f3f1ff; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .visibility-control strong, .visibility-control small { display: block; }
@@ -805,11 +841,11 @@ button { touch-action: manipulation; }
   background: linear-gradient(rgba(7,54,111,.08), rgba(7,54,111,.08)), url("./assets/soulmove-campaign.webp") center 28% / cover;
 }
 .story-community { color: #fff; background: linear-gradient(145deg, var(--soul-purple), var(--soul-blue)); }
-.story-market { color: #fff; background: linear-gradient(145deg, var(--soul-navy), var(--soul-green)); }
+.story-market { color: #fff; background: linear-gradient(145deg, #4a50e3, #686ceb); }
 .user-one { background: linear-gradient(145deg, #ad83ff, #5a45b8); color: #fff; font-size: .68rem; font-weight: 800; }
 .user-two { background: linear-gradient(145deg, #4fc4dc, #11628a); color: #fff; font-size: .68rem; font-weight: 800; }
 .user-current { background: linear-gradient(145deg, var(--soul-purple), var(--soul-blue)); color: #fff; font-size: .68rem; font-weight: 800; }
-.market-avatar { color: #fff; background: linear-gradient(145deg, var(--soul-navy), var(--soul-green)); }
+.market-avatar { color: #fff; background: #4a50e3; }
 
 .organic-post-card,
 .marketplace-post-card,
@@ -823,7 +859,7 @@ button { touch-action: manipulation; }
 }
 .organic-post-card {
   color: #fff;
-  background: linear-gradient(145deg, #6256f8, #3c7dd9 68%, #46b783);
+  background: linear-gradient(145deg, #4a50e3, #686ceb);
 }
 .organic-post-card > span { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.16); display: grid; place-items: center; }
 .organic-post-card small,
@@ -871,7 +907,7 @@ button { touch-action: manipulation; }
 .achievement-stats strong { font-size: .9rem; }
 .achievement-stats span { margin-top: 3px; color: rgba(255,255,255,.72); font-size: .56rem; line-height: 1.25; }
 .achievement-post > p { margin: 0; color: rgba(255,255,255,.8); font-size: .72rem; }
-.marketplace-post-card { color: #fff; background: linear-gradient(145deg, #0b1d43, #174f67 62%, #3b8b64); cursor: pointer; }
+.marketplace-post-card { color: #fff; background: linear-gradient(145deg, #4a50e3, #686ceb); cursor: pointer; }
 .marketplace-post-card small { margin-top: 0; }
 .marketplace-post-card > span { margin-top: 20px; display: flex; align-items: center; gap: 3px; font-size: .72rem; font-weight: 800; }
 
@@ -954,9 +990,9 @@ button { touch-action: manipulation; }
 .story-progress,
 .ad-head,
 .ad-copy { position: relative; z-index: 2; }
-.story-ads { background: linear-gradient(155deg, #5f52ef, #355cae 56%, #247553); }
-.story-community-view { background: radial-gradient(circle at 75% 23%, rgba(77,199,255,.35), transparent 24%), linear-gradient(155deg, #171057, #174a72 58%, #255d49); }
-.story-market-view { background: radial-gradient(circle at 68% 22%, rgba(87,222,160,.35), transparent 24%), linear-gradient(155deg, #07142b, #073b68 56%, #27604b); }
+.story-ads { background: linear-gradient(155deg, #4a50e3, #686ceb); }
+.story-community-view { background: linear-gradient(155deg, #4a50e3, #619cef); }
+.story-market-view { background: linear-gradient(155deg, #4a50e3, #686ceb); }
 
 .comments-page { min-height: 100%; display: flex; flex-direction: column; }
 .comments-list { margin: 18px 0; display: grid; gap: 16px; }

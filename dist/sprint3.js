@@ -69,9 +69,29 @@ renderResult = function(){const j=selectedResult();if(!j)return renderHistory();
  <p class="move-demo">*Valores ilustrativos, sem cálculo ambiental auditado. Não representam créditos de carbono. Fórmula final de pontuação e metodologia em validação.</p>`)};
 function renderHistory(){return screen('Histórico',`<h1>Suas jornadas</h1><p>Resultados, trechos e solicitações de revisão.</p>${state.journeys.length?state.journeys.slice().reverse().map((j,i)=>`<button type="button" class="move-history" data-action="history-result" data-id="${j.id}"><span><strong>${labels[j.status]}${j.appeal?' · contestação em análise':''}</strong><small>${demo.date} · ${j.mode==='free'?'Livre':'VIVA'} · ${j.segments.length} trecho(s)</small></span>${icon('chevron')}</button>`).join(''):row('Nenhuma jornada nesta sessão','Comece uma jornada livre ou escolha uma campanha.','route')}${button('Iniciar jornada livre','free-journey','primary-button')}`)}
 function renderAppeal(){return screen('Contestar resultado',`<h1>Solicitar revisão</h1><p>Explique o que aconteceu no deslocamento. Nenhum ponto ou benefício é concedido apenas por abrir uma contestação.</p><label class="move-field">Justificativa<textarea id="appeal-reason" maxlength="600" rows="5" placeholder="Conte o que precisa ser revisto"></textarea></label>${row('Evidência complementar opcional','Nesta demonstração, a análise utiliza a justificativa e os registros simulados. Não envie documentos pessoais.')}<p class="move-demo">Prazo e política de revisão dependem do regulamento versionado. Decisões após homologação exigem análise específica.</p>`,button('Enviar solicitação','submit-appeal','primary-button'))}
-renderRanking = function(){const monthly=state.cycle==='month';const points=(monthly?1240:340)+competitive();return screen('Liga e Temporada',`<div class="move-tabs">${button('Liga semanal','week',monthly?'secondary-button':'primary-button')}${button('Temporada mensal','month',monthly?'primary-button':'secondary-button')}</div><h1>${monthly?'Temporada mensal':'Liga semanal'}</h1><p>${monthly?demo.month:demo.week} · horário de São Paulo</p><span class="move-pill">Classificação provisória · simulada</span><div class="move-stats"><div><strong>${points}</strong><span>seus Pontos de Impacto</span></div><div><strong>${dailyCount()}/2</strong><span>jornadas pontuadas hoje</span></div></div>
- <div class="ranking-list">${[['Marina S.',monthly?1820:680],['Rafael M.',monthly?1740:640],['Bianca L.',monthly?1630:602]].map(([name,total],i)=>`<article class="ranking-row"><strong>${i+1}º</strong><span class="ranking-name"><strong>${name}</strong><small>${total} Pontos de Impacto</small></span></article>`).join('')}</div>
- ${row('Sua pontuação',`${points} Pontos de Impacto. ${state.rankingVisible?'Perfil visível':'Perfil oculto para outros participantes'}. A posição depende da classificação completa.`, 'trophy')}
+function renderLeagueStandings(monthly, points) {
+ const people = [
+  {id:'marcus',name:'Marcus',points:monthly?1820:680},
+  {id:'kaique',name:'Kaique',points:monthly?1740:640},
+  {id:'silas',name:'Silas',points:monthly?1630:602},
+  {id:'carlos',name:'Carlos Eduardo',points,current:true}
+ ].sort((a,b)=>b.points-a.points);
+ // Equal scores share a position until the tie-breaking regulation is approved.
+ const position = person => people.findIndex(p=>p.points===person.points)+1;
+ const portrait = person => `<span class="member-photo member-${person.id}" role="img" aria-label="Foto de ${person.name}"></span>`;
+ const podium = people.filter(p=>!p.current||state.rankingVisible).slice(0,3);
+ return `<section class="league-standings" aria-label="Classificação demonstrativa">
+  <p class="league-caption">Amostra de 4 participantes · Pontos de Impacto</p>
+  <div class="league-podium">${podium.map((p,i)=>`<article class="league-podium-card podium-slot-${i+1}${p.current?' current':''}">
+   <span class="league-place">${position(p)}º</span>${portrait(p)}<strong>${p.current?'Você':p.name}</strong><span class="league-score">${p.points.toLocaleString('pt-BR')} <small>pts</small></span>
+  </article>`).join('')}</div>
+  <div class="league-list">${people.map(p=>`<article class="league-row${p.current?' current':''}" ${p.current?'aria-label="Sua classificação"':''}>
+   <span class="league-place">${position(p)}º</span>${portrait(p)}<div class="league-name"><strong>${p.current?'Você':p.name}</strong><small>${p.current?(state.rankingVisible?'Carlos Eduardo':'Só você pode ver seu perfil'):'Participante'}</small></div><strong class="league-score">${p.points.toLocaleString('pt-BR')}<small>pts</small></strong>
+  </article>`).join('')}</div>
+ </section>`;
+}
+renderRanking = function(){const monthly=state.cycle==='month';const points=(monthly?1240:340)+competitive();return screen('Liga e Temporada',`<div class="move-tabs">${button('Liga semanal','week',monthly?'secondary-button':'primary-button')}${button('Temporada mensal','month',monthly?'primary-button':'secondary-button')}</div><h1>${monthly?'Temporada mensal':'Liga semanal'}</h1><p>${monthly?demo.month:demo.week} · horário de São Paulo</p><span class="move-pill">Classificação provisória · simulada</span>
+ ${renderLeagueStandings(monthly,points)}
  ${monthly?`<article class="move-prize">${icon('bolt',28)}<h2>Sua mobilidade pode pagar sua energia</h2><p>Incentivo previsto: cobertura integral de uma conta de energia do maior pontuador elegível.</p><span class="move-pill move-warning">Edição com prêmio ainda não habilitada</span><p>A publicação depende de orçamento reservado, regulamento, desempate, documentação, contestação e pagamento definidos.</p></article>`:row('Reconhecimento semanal','A Liga acompanha seu progresso de segunda a domingo. Não há benefício financeiro presumido.','trophy')}
  ${button('Entender pontuação e regras','ranking-rules')}`)};
 renderRankingRules = function(){return screen('Regras dos ciclos',`<h1>Impacto e recompensa têm papéis diferentes</h1>${row('Pontos de Impacto','Somente jornadas elegíveis contribuem para rankings. Confiança é critério de elegibilidade, não multiplicador.','leaf')}${row('Duas primeiras do dia','As duas primeiras jornadas elegíveis do dia entram na classificação, considerando São Paulo. As demais permanecem no histórico.','clock')}${row('Pontos Soul','Benefícios financiados por campanhas não entram no ranking. Compras, cliques e compartilhamentos não geram Pontos de Impacto.','wallet')}${row('Apuração e desempate','Consultar este painel não homologa ciclos nem concede prêmios. Critérios de desempate e revisão dependem do regulamento versionado.','shield')}<label class="consent-option"><input type="checkbox" data-preference="ranking" ${state.rankingVisible?'checked':''}><span><strong>Aparecer na classificação pública</strong><span>Seu histórico e sua pontuação permanecem acessíveis para você.</span></span></label><p class="move-demo">68 pontos por jornada é um valor fixo de cenário. A fórmula 0–100 e os limites de distância/tempo não estão implementados nem definidos neste protótipo.</p>`)};
@@ -120,9 +140,18 @@ document.addEventListener('click',async event=>{
   'authorize-close':()=>{if(!state.closeRequested)return;state.closeRequested=false;state.campaignStatus='closing';state.reportVersion=1;render()},
   homologate:()=>{if(state.currentJourney?.mode==='campaign'||state.journeys.some(j=>j.mode==='campaign'&&j.appeal)){showToast('Há jornadas ou contestações pendentes. Relatório permanece provisório.');return}if(state.campaignStatus!=='closing')return;state.campaignStatus='closed';state.reservation=0;state.reportVersion+=1;render()},
   'export-report':()=>downloadText('soulbusiness-viva-relatorio.txt',reportText()),
-  back:()=>{const parent={campaign:'move-home',ready:'move-home',consent:'move-home',history:'move-home',ranking:'move-home','ranking-rules':'ranking',result:'history',share:'result',appeal:'result',integration:'journey',proof:'proof',journey:'journey',benefit:'move-home',offer:'benefit','wallet-detail':'wallet',wallet:'move-home',marketplace:'feed',comments:state.commentsReturn};if(state.screen==='proof'){showToast('A coleta já foi encerrada. Envie para validação.');return}navigate(parent[state.screen]||'feed')}
+  back:()=>{if(state.screen==='wallet'){navigate(state.walletReturn||'feed');return}if(state.screen==='marketplace'){navigate(state.marketplaceReturn||'feed');return}if(state.screen==='wallet-detail'){navigate('wallet');return}const parent={campaign:'move-home',ready:'move-home',consent:'move-home',history:'move-home',ranking:'move-home','ranking-rules':'ranking',result:'history',share:'result',appeal:'result',integration:'journey',proof:'proof',journey:'journey',benefit:'move-home',offer:'benefit',comments:state.commentsReturn};if(state.screen==='proof'){showToast('A coleta já foi encerrada. Envie para validação.');return}navigate(parent[state.screen]||'feed')}
  };
  if(handlers[action]){event.preventDefault();event.stopImmediatePropagation();await handlers[action]()}
 },true);
 document.addEventListener('change',event=>{if(event.target.id==='campaign-accept'){state.campaignAccepted=event.target.checked;render()}if(event.target.id==='business-zone'){state.businessZone=event.target.value;render()}},true);
+function setPresentationMode(active) {
+ document.body.classList.toggle('presentation-mode',active);
+ document.querySelector('.prototype-toolbar').hidden=active;
+ document.querySelector('#presentation-exit').hidden=!active;
+ (active?document.querySelector('#presentation-exit'):document.querySelector('#presentation-start')).focus();
+}
+document.querySelector('#presentation-start').addEventListener('click',()=>setPresentationMode(true));
+document.querySelector('#presentation-exit').addEventListener('click',()=>setPresentationMode(false));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('presentation-mode'))setPresentationMode(false)});
 render();
