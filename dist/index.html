@@ -6,6 +6,7 @@
   <meta name="description" content="Protótipo navegável da jornada SoulMove integrado ao ecossistema SoulUP.">
   <title>SoulMove — Protótipo da jornada</title>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./tutorial.css">
 </head>
 <body>
   <div class="prototype-shell">
@@ -19,6 +20,7 @@
         <button class="toolbar-tab" type="button" data-perspective="business">SoulBusiness</button>
       </nav>
       <div class="toolbar-actions">
+        <button class="toolbar-reset" type="button" id="tutorial-start">Ver tutorial</button>
         <button class="toolbar-reset" type="button" id="presentation-start" title="Ocultar controles; pressione Esc para voltar">Apresentar</button>
         <button class="toolbar-reset" type="button" data-action="reset">Reiniciar</button>
       </div>
@@ -32,5 +34,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./app.js"></script>
   <script src="./sprint3.js"></script>
+  <script src="./tutorial.js"></script>
 </body>
 </html>

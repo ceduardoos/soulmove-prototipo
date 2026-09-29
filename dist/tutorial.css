@@ -1,0 +1,14 @@
+/* SoulUP-style coach marks; scoped to the introductory guide. */
+.soulmove-tour { position: fixed; inset: 0; z-index: 10000; overflow: hidden; isolation: isolate; }
+.tour-spot { position: fixed; margin: 0; padding: 0; border: 5px solid #fff; border-radius: 22px; background: transparent; box-shadow: 0 0 0 200vmax rgba(0,0,0,.64); box-sizing: border-box; }
+button.tour-spot { cursor: pointer; }
+.tour-card { position: fixed; box-sizing: border-box; padding: 21px; border-radius: 22px; background: #fff; color: #24262c; box-shadow: 0 8px 30px #0002; font-family: inherit; }
+.tour-card::before { content: ''; position: absolute; left: var(--tour-arrow); top: -13px; transform: translateX(-50%); border-left: 13px solid transparent; border-right: 13px solid transparent; border-bottom: 14px solid #fff; }
+.tour-card.tour-above::before { top: auto; bottom: -13px; border-bottom: 0; border-top: 14px solid #fff; }
+.tour-card h2 { margin: 0 0 9px; font-size: 18px; line-height: 1.3; }
+.tour-card p { margin: 0; font-size: 15px; line-height: 1.5; }
+.tour-card footer { display: flex; align-items: center; gap: 8px; margin-top: 17px; }
+.tour-card footer span { margin-right: auto; color: #70747c; font-size: 13px; white-space: nowrap; }
+.tour-card button { border: 0; padding: 10px 5px; min-height: 44px; background: none; color: #565be2; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.soulmove-tour button:focus-visible { outline: 3px solid #343ab8; outline-offset: 3px; }
+@media (max-width: 380px) { .tour-card { padding: 17px; } .tour-card p { font-size: 14px; } }
