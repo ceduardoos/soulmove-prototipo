@@ -20,14 +20,17 @@
     document.removeEventListener('scroll', place, true);
     try { localStorage.setItem(storageKey, 'done'); } catch { /* Storage may be unavailable. */ }
     const focus = document.querySelector(steps[index].target);
-    if (returnFocus?.isConnected && returnFocus.getClientRects().length) returnFocus.focus();
+    if (returnFocus?.isConnected && returnFocus !== document.body && returnFocus.getClientRects().length) returnFocus.focus();
     else (focus?.matches('button') ? focus : launcher).focus({preventScroll:true});
   }
   function place() {
     if (!overlay || !target?.isConnected) return;
     const r = target.getBoundingClientRect(), card = overlay.querySelector('.tour-card');
-    const width = Math.min(340, window.innerWidth - 24);
-    const left = Math.max(12, Math.min(r.left, window.innerWidth - width - 12));
+    const phone = document.querySelector('.phone').getBoundingClientRect();
+    const minLeft = Math.max(12, phone.left + 12);
+    const maxRight = Math.min(window.innerWidth - 12, phone.right - 12);
+    const width = Math.min(340, maxRight - minLeft);
+    const left = Math.max(minLeft, Math.min(r.left, maxRight - width));
     card.style.width = width + 'px'; card.style.left = left + 'px';
     const height = card.offsetHeight;
     const below = r.bottom + 22 + height <= window.innerHeight - 12;
